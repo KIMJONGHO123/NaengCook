@@ -1,0 +1,8 @@
+# Resolve from apps/server, the documented execution directory.
+spring:
+  config:
+    import: optional:file:../../.env[.properties]
+  datasource:
+    url: jdbc:mysql://${DB_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE}?connectionTimeZone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}

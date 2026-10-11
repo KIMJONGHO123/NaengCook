@@ -1,0 +1,28 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.keystore
+# Node / Expo
+node_modules/
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+npm-debug.log*
+# Java / Gradle / IDE
+.gradle/
+build/
+out/
+*.class
+.idea/
+*.iml
+.vscode/
+# Local tooling and verification output
+.tools/
+.local/
+*.log
+.DS_Store
+Thumbs.db

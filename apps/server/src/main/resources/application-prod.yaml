@@ -1,0 +1,6 @@
+# Production must supply a separate environment; never imports the local .env.
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
