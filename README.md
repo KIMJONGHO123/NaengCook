@@ -50,7 +50,7 @@ NaengCook/
 ├── .env.example
 ├── .gitignore
 ├── .nvmrc
-├── AGENTS.md
+├── CLAUDE.md
 └── README.md
 ```
 
@@ -273,11 +273,11 @@ H2 테스트는 컨텍스트 로딩과 서버 상태 API 응답을 검사합니�
 ```powershell
 git switch main
 git pull --ff-only
-git switch -c codex/작업이름
+git switch -c claude/작업이름
 git status
 git add <변경한 파일>
 git commit -m "변경 내용"
-git push -u origin codex/작업이름
+git push -u origin claude/작업이름
 ```
 
 잠금 파일과 Gradle Wrapper는 커밋합니다. `.env`, node_modules, 빌드 출력, 개인 IDE 설정은 제외합니다.
