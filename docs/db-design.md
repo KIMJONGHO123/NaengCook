@@ -1,8 +1,8 @@
 # NaengCook DB 설계 (MVP 초안 v0.2)
 
 작성일 2026-11-05, 수정일 2026-11-06. 구현 전 설계 문서이며 아래 DDL은 아직 실행하지 않았다.
-`NaengCook_DB_데이터구성.txt`의 5개 테이블을 기준으로, [`api-spec.md`](./api-spec.md)와 [`recommendation-design.md`](./recommendation-design.md)를 구현하는 데 필요한 내용을 보완했다.
-추천 정책은 이전 계획인 데이터구성 문서가 아니라 `recommendation-design.md`를 기준으로 한다.
+초기 설계안의 5개 테이블을 기준으로, [`api-spec.md`](./api-spec.md)와 [`recommendation-design.md`](./recommendation-design.md)를 구현하는 데 필요한 내용을 보완했다.
+추천 정책은 초기 설계안이 아니라 `recommendation-design.md`를 기준으로 한다.
 
 ## 테이블 관계
 
@@ -124,6 +124,7 @@ CREATE TABLE recipe_ingredients (
 |---|---|---|
 | `ingredients[].name` | `ingredients.name` | `recipe_ingredients`와 조인한다. |
 | `ingredients[].quantity`, `unit` | `recipe_ingredients.quantity`, `unit` | "약간"처럼 수량이 없으면 NULL이다. |
+| `ingredients[].isRequired` | `recipe_ingredients.is_required` | 필수 재료 여부다. |
 | `steps` | `recipes.instructions` | 단계를 줄바꿈으로 저장하고 응답 시 배열로 나눈다. |
 
 ## 동작 규칙
@@ -136,7 +137,8 @@ CREATE TABLE recipe_ingredients (
 - **관리 날짜:** 기준 재료를 고르면 앱이 날짜 칸을 `오늘 + default_days`로 미리 채우고, 사용자가 확인하거나 고친 값을 저장한다. 직접 추가한 재료는 사용자가 날짜를 입력한다.
 - **관리 날짜 변경:** 분류나 보관 방식을 바꿔도 다시 계산하지 않는다. 사용자가 날짜를 직접 수정할 때만 바뀐다.
 - **필수 재료:** 기본 양념과 없어도 되는 재료는 `is_required = FALSE`로 넣는다. 레시피마다 필수 재료를 1개 이상 둔다. 추천 계산 규칙은 `recommendation-design.md`를 따른다.
-- **분류 값:** `storage_type`은 DB ENUM 대신 문자열로 저장하고 애플리케이션에서 검증한다.
+- **분류 값:** `category`와 `storage_type`은 DB ENUM 대신 문자열로 저장하고 애플리케이션에서 검증한다. `category`의 허용 값은 `api-spec.md`를 따른다.
+- **MVP 미사용 컬럼:** `storage_type`, `purchase_date`는 MVP API에서 입력받지 않으므로 NULL로 둔다. 후속 기능을 위해 컬럼은 유지한다.
 - **테이블 구조:** `category`와 `default_unit`은 별도 테이블로 나누지 않고 컬럼으로 유지한다.
 - **스키마 적용:** `ddl-auto=none`을 유지하고, 구현 시 Flyway 마이그레이션 파일(`V1__init.sql` 등)을 커밋해 팀원의 로컬 DB를 맞춘다. 테스트는 H2를 쓰므로 Flyway 처리 방식을 함께 설정한다.
 - **재료 삭제:** `ingredients` 행이 보유 기록이나 레시피에서 쓰이는 동안에는 삭제할 수 없다.
@@ -151,4 +153,6 @@ CREATE TABLE recipe_ingredients (
 | 스키마 적용 방식 | Flyway 같은 도구 도입을 검토 | Flyway 사용 | 팀원 4명의 로컬 DB를 같은 구조로 맞출 수 있다. |
 | 목록에 없는 재료 | 입력하면 `ingredients` 행을 자동 생성 | 자동완성에서 고르고, 없으면 "직접 추가"를 눌러 생성 | 오타가 새 재료로 저장되는 일을 줄인다. |
 | 분류/단위 테이블 | 분리 여부 미정 | 분리하지 않고 컬럼으로 유지 | MVP 범위에서는 컬럼으로 충분하다. |
-| 추천 제외 기준 | 데이터구성 문서: 부족 5개 이상 | `recommendation-design.md`의 부족 50% 이상 | 이전 계획이며 추천 설계 문서를 기준으로 삼는다. |
+| 추천 제외 기준 | 초기 설계안: 부족 5개 이상 | `recommendation-design.md`의 부족 50% 이상 | 이전 계획이며 추천 설계 문서를 기준으로 삼는다. |
+| `storage_type`, `purchase_date` | 사용 범위 미정 | MVP에서는 입력받지 않고 NULL로 유지 | API v1.0 결정에 맞췄다. |
+| `category` 검증 | 규칙 없음 | `api-spec.md`의 고정 목록으로 애플리케이션에서 검증 | API v1.0 결정에 맞췄다. |
