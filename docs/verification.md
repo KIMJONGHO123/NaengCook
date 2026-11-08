@@ -1,5 +1,13 @@
 # 초기 개발 환경 검증 기록
 
+## 2026-11-07: Flyway DB 스키마 적용
+
+`feature/db-schema`에서 Flyway와 `V1__init.sql`(테이블 6개)을 추가했다.
+
+- H2(`MODE=MySQL`): `gradlew.bat clean build` 성공. 마이그레이션 후 테이블 6개 생성을 테스트로 확인했다.
+- 실제 MySQL 8.0.46: `gradlew.bat bootRun`으로 V1 적용, `flyway_schema_history` 기록과 테이블 6개, 외래키 5개의 삭제 규칙을 확인했다. `/api/status`는 HTTP 200이었다.
+- 미검증: compose.yaml의 MySQL 8.4 적용, 시드 데이터, 재료/레시피 API.
+
 ## 최신 상태: Docker 보류, 로컬 MySQL 연결 완료
 
 사용자 요청으로 서버 확인 경로와 컨트롤러 이름을 `/api/status`, `StatusController`로 변경했다.

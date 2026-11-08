@@ -1,8 +1,8 @@
 # NaengCook 개발 규칙
 
 4인 캡스톤 프로젝트: AI 기반 냉장고 식재료 관리 및 레시피 추천 모바일 앱.
-현재는 개발 환경만 구축한 단계다. 요청 없이 인증, 식재료 CRUD, AI, 추천, 알림,
-엔티티/테이블, 배포 또는 복잡한 계층을 추가하지 않는다.
+현재는 개발 환경과 DB 스키마까지 구축한 단계다. 요청 없이 인증, 식재료 CRUD, AI, 추천, 알림,
+엔티티, 배포 또는 복잡한 계층을 추가하지 않는다.
 
 ## 구조와 기술
 - `apps/mobile`: React Native 0.86, Expo SDK 57, TypeScript, Expo Router, npm.
@@ -24,7 +24,7 @@
 - `.env`, 비밀키, DB 비밀번호를 커밋하거나 로그에 출력하지 않는다.
 - `EXPO_PUBLIC_*`는 앱에 포함되므로 비밀을 넣지 않는다.
 - 운영은 `prod` 프로필과 외부 환경변수를 사용한다. 로컬 DB를 운영에 사용하지 않는다.
-- JPA `ddl-auto=none`을 유지한다. 실제 스키마는 별도 요청 시 설계한다.
+- JPA `ddl-auto=none`을 유지한다. 스키마는 Flyway(`apps/server/src/main/resources/db/migration`)로만 바꾸고, 머지된 파일은 수정하지 않는다.
 
 ## 검증 명령 (PowerShell)
 Windows 모바일은 루트 `mobile.cmd`를 사용해 `.nvmrc` 버전을 적용한다.

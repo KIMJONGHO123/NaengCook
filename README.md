@@ -2,8 +2,8 @@
 
 캡스톤 디자인 1 프로젝트 공간입니다. 4인 팀이 개발하는 AI 기반 냉장고 식재료 관리 및
 레시피 추천 모바일 앱입니다. 식재료 등록, 소비기한 관리와 임박 재료 우선 추천을 목표로 합니다.
-현재 구현은 **초기 개발 환경과 `GET /api/status`**입니다.
-인증, 식재료 CRUD, AI, 추천, 알림, 실제 DB 테이블은 아직 구현하지 않았습니다.
+현재 구현은 **초기 개발 환경, `GET /api/status`, Flyway DB 스키마**입니다.
+인증, 식재료 CRUD, AI, 추천, 알림, 시드 데이터는 아직 구현하지 않았습니다.
 
 ## 기술 스택 및 고정 버전
 
@@ -24,7 +24,7 @@
 모바일 의존성의 실제 패치 버전은 `apps/mobile/package-lock.json`으로 고정합니다.
 팀원은 `npm ci`를 사용하며 SDK나 React Native를 개별적으로 업그레이드하지 않습니다.
 Gradle은 별도 설치가 필요 없습니다. Wrapper 배포 파일의 SHA256을 검증합니다.
-Spring Web, Data JPA, Validation, MySQL Driver, Boot Test를 사용합니다.
+Spring Web, Data JPA, Validation, Flyway, MySQL Driver, Boot Test를 사용합니다.
 H2는 DB 없이 테스트하기 위한 **테스트 전용** 의존성입니다.
 
 ## 폴더 구조
@@ -41,7 +41,7 @@ NaengCook/
 │   │   └── package-lock.json
 │   └── server/
 │       ├── src/main/java/com/capstone/fridgerecipe/
-│       ├── src/main/resources/   # 공통, local, prod 설정
+│       ├── src/main/resources/   # 공통, local, prod 설정, db/migration
 │       ├── src/test/             # H2 컨텍스트 / 서버 상태 API 테스트
 │       ├── gradle/wrapper/
 │       └── build.gradle
@@ -147,7 +147,7 @@ MySQL 설치 경로나 관리자 이름이 다르면:
 powershell -ExecutionPolicy Bypass -File scripts/setup-local-mysql.ps1 -MySqlPath "D:\MySQL\bin\mysql.exe" -AdminUser root
 ```
 
-DB는 `utf8mb4`와 `utf8mb4_0900_ai_ci`로 생성하며 업무용 테이블은 생성하지 않습니다.
+DB는 `utf8mb4`와 `utf8mb4_0900_ai_ci`로 생성합니다. 업무용 테이블은 서버를 시작할 때 Flyway가 만듭니다.
 데이터는 로컬 MySQL 서비스의 데이터 디렉터리에 저장됩니다.
 이미 DB/계정이 준비돼 있으면 최초 설정은 다시 실행할 필요가 없습니다.
 
@@ -166,7 +166,8 @@ cd apps/server
 
 macOS/Linux에서는 `chmod +x gradlew` 후 `./gradlew build`, `./gradlew bootRun`을 사용합니다.
 첫 실행은 Gradle과 의존성 다운로드로 시간이 걸릴 수 있습니다.
-JPA는 `ddl-auto=none`이므로 테이블을 자동 생성하지 않습니다.
+JPA는 `ddl-auto=none`이므로 테이블을 만들지 않습니다. 서버가 시작될 때 Flyway가 `db/migration`의 SQL을 순서대로 적용합니다.
+이미 머지된 마이그레이션 파일은 고치지 말고 `V2__설명.sql`처럼 새 파일을 추가합니다.
 DB 연결 성공은 시작 로그의 HikariPool 연결 및 EntityManagerFactory 초기화로 확인합니다.
 
 다른 터미널 또는 Postman에서:
@@ -249,7 +250,7 @@ npx.cmd expo export --platform all
 .\gradlew.bat clean build
 ```
 
-H2 테스트는 컨텍스트 로딩과 서버 상태 API 응답을 검사합니다. 실제 MySQL 검증을 대신하지 않습니다.
+H2 테스트는 컨텍스트 로딩, 서버 상태 API 응답, Flyway 테이블 생성을 검사합니다. 실제 MySQL 검증을 대신하지 않습니다.
 이번 PC에서 수행한 결과와 미완료 항목은 `docs/verification.md`를 확인하세요.
 
 ## 자주 발생하는 오류
