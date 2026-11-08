@@ -1,6 +1,6 @@
 # NaengCook DB 설계 (MVP 초안 v0.2)
 
-작성일 2026-11-05, 수정일 2026-11-06. 구현 전 설계 문서이며 아래 DDL은 아직 실행하지 않았다.
+작성일 2026-11-05, 수정일 2026-11-06. 아래 DDL은 `apps/server/src/main/resources/db/migration/V1__init.sql`로 적용했다.
 초기 설계안의 5개 테이블을 기준으로, [`api-spec.md`](./api-spec.md)와 [`recommendation-design.md`](./recommendation-design.md)를 구현하는 데 필요한 내용을 보완했다.
 추천 정책은 초기 설계안이 아니라 `recommendation-design.md`를 기준으로 한다.
 
@@ -140,7 +140,7 @@ CREATE TABLE recipe_ingredients (
 - **분류 값:** `category`와 `storage_type`은 DB ENUM 대신 문자열로 저장하고 애플리케이션에서 검증한다. `category`의 허용 값은 `api-spec.md`를 따른다.
 - **MVP 미사용 컬럼:** `storage_type`, `purchase_date`는 MVP API에서 입력받지 않으므로 NULL로 둔다. 후속 기능을 위해 컬럼은 유지한다.
 - **테이블 구조:** `category`와 `default_unit`은 별도 테이블로 나누지 않고 컬럼으로 유지한다.
-- **스키마 적용:** `ddl-auto=none`을 유지하고, 구현 시 Flyway 마이그레이션 파일(`V1__init.sql` 등)을 커밋해 팀원의 로컬 DB를 맞춘다. 테스트는 H2를 쓰므로 Flyway 처리 방식을 함께 설정한다.
+- **스키마 적용:** `ddl-auto=none`을 유지하고, 구현 시 Flyway 마이그레이션 파일(`V1__init.sql` 등)을 커밋해 팀원의 로컬 DB를 맞춘다. 테스트는 H2 `MODE=MySQL`에서 같은 마이그레이션을 실행한다.
 - **재료 삭제:** `ingredients` 행이 보유 기록이나 레시피에서 쓰이는 동안에는 삭제할 수 없다.
 
 ## 변경 이력 (v0.1 → v0.2)
